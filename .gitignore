@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Do not upload REDCap data
+*.csv
+sample_data/
+
+# Do not upload generated reports
+report_*.docx
+output/
