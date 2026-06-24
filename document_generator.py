@@ -9,6 +9,92 @@ from field_mapping import FIELD_MAP
 
 # I never even touched the code in this file
 
+TEST_CLASSIFICATION_RULES = {
+    "kbit_standard": [
+        (131, "Upper Extreme"),
+        (116, "Above Average"),
+        (85, "Average"),
+        (70, "Below Average"),
+        (float("-inf"), "Lower Extreme"),
+    ],
+
+    "ctopp_elision_standard": [
+        (17, "Very Superior"),
+        (15, "Superior"),
+        (13, "Above Average"),
+        (8, "Average"),
+        (6, "Below Average"),
+        (4, "Poor"),
+        (float("-inf"), "Very Poor"),
+    ],
+
+    "ctopp_nwr_standard": [
+        (17, "Very Superior"),
+        (15, "Superior"),
+        (13, "Above Average"),
+        (8, "Average"),
+        (6, "Below Average"),
+        (4, "Poor"),
+        (float("-inf"), "Very Poor"),
+    ],
+
+    "wrmt_word_id_standard": [
+        (131, "Well Above Average"),
+        (116, "Above Average"),
+        (85, "Average"),
+        (70, "Below Average"),
+        (float("-inf"), "Well Below Average"),
+    ],
+
+    "wrmt_word_attack_standard": [
+        (131, "Well Above Average"),
+        (116, "Above Average"),
+        (85, "Average"),
+        (70, "Below Average"),
+        (float("-inf"), "Well Below Average"),
+    ],
+
+    "wrmt_pc_standard": [
+        (131, "Well Above Average"),
+        (116, "Above Average"),
+        (85, "Average"),
+        (70, "Below Average"),
+        (float("-inf"), "Well Below Average"),
+    ],
+
+    "towre_swe_standard": [
+        (130, "Very Superior"),
+        (121, "Superior"),
+        (111, "Above Average"),
+        (90, "Average"),
+        (80, "Below Average"),
+        (70, "Poor"),
+        (float("-inf"), "Very Poor"),
+    ],
+
+    "towre_pde_standard": [
+        (130, "Very Superior"),
+        (121, "Superior"),
+        (111, "Above Average"),
+        (90, "Average"),
+        (80, "Below Average"),
+        (70, "Poor"),
+        (float("-inf"), "Very Poor"),
+    ],
+}
+
+
+CATEGORY_FIELDS = {
+    "kbit_standard": "kbit_category",
+    "ctopp_elision_standard": "ctopp_elision_category",
+    "ctopp_nwr_standard": "ctopp_nwr_category",
+    "wrmt_word_id_standard": "wrmt_word_id_category",
+    "wrmt_word_attack_standard": "wrmt_word_attack_category",
+    "wrmt_pc_standard": "wrmt_pc_category",
+    "towre_swe_standard": "towre_swe_category",
+    "towre_pde_standard": "towre_pde_category",
+}
+
 def clean_value(value: Any) -> str:
     """
     Convert missing values to an empty string.
