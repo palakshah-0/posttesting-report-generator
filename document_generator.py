@@ -7,9 +7,9 @@ from docxtpl import DocxTemplate
 
 from field_mapping import FIELD_MAP
 
-# I never even touched the code in this file
+# Classification rules are where the score for the child falls 
 
-TEST_CLASSIFICATION_RULES = {
+TEST_CLASSIFICATION_RULES = { # NEED DIBELS RANGES
     "kbit_standard": [
         (131, "Upper Extreme"),
         (116, "Above Average"),
@@ -81,6 +81,14 @@ TEST_CLASSIFICATION_RULES = {
         (70, "Poor"),
         (float("-inf"), "Very Poor"),
     ],
+
+    "ppvt_standard": [
+        (130, "Extremely high score"),
+        (116, "Moderately high score"),
+        (85, "Average score"),
+        (70, "Moderately low score"),
+        (float("-inf"), "Extremely low score"),
+    ],
 }
 
 
@@ -93,6 +101,7 @@ CATEGORY_FIELDS = {
     "wrmt_pc_standard": "wrmt_pc_category",
     "towre_swe_standard": "towre_swe_category",
     "towre_pde_standard": "towre_pde_category",
+    "ppvt_standard" : "ppvt_category"
 }
 
 def clean_value(value: Any) -> str:
