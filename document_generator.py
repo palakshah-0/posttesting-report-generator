@@ -9,85 +9,69 @@ from field_mapping import FIELD_MAP
 
 # Classification rules are where the score for the child falls 
 
-TEST_CLASSIFICATION_RULES = { # NEED DIBELS RANGES
+TEST_CLASSIFICATION_RULES = {
     "kbit_standard": [
-        (131, "Upper Extreme"),
+        (131, "Superior"),
         (116, "Above Average"),
         (85, "Average"),
         (70, "Below Average"),
-        (float("-inf"), "Lower Extreme"),
+        (float("-inf"), "Well Below Average"),
     ],
-
     "ctopp_elision_standard": [
-        (17, "Very Superior"),
         (15, "Superior"),
         (13, "Above Average"),
         (8, "Average"),
         (6, "Below Average"),
-        (4, "Poor"),
-        (float("-inf"), "Very Poor"),
+        (float("-inf"), "Well Below Average"),
     ],
-
     "ctopp_nwr_standard": [
-        (17, "Very Superior"),
         (15, "Superior"),
         (13, "Above Average"),
         (8, "Average"),
         (6, "Below Average"),
-        (4, "Poor"),
-        (float("-inf"), "Very Poor"),
+        (float("-inf"), "Well Below Average"),
     ],
-
     "wrmt_word_id_standard": [
-        (131, "Well Above Average"),
+        (131, "Superior"),
         (116, "Above Average"),
         (85, "Average"),
         (70, "Below Average"),
         (float("-inf"), "Well Below Average"),
     ],
-
     "wrmt_word_attack_standard": [
-        (131, "Well Above Average"),
+        (131, "Superior"),
         (116, "Above Average"),
         (85, "Average"),
         (70, "Below Average"),
         (float("-inf"), "Well Below Average"),
     ],
-
     "wrmt_pc_standard": [
-        (131, "Well Above Average"),
+        (131, "Superior"),
         (116, "Above Average"),
         (85, "Average"),
         (70, "Below Average"),
         (float("-inf"), "Well Below Average"),
     ],
-
     "towre_swe_standard": [
-        (130, "Very Superior"),
         (121, "Superior"),
         (111, "Above Average"),
         (90, "Average"),
         (80, "Below Average"),
-        (70, "Poor"),
-        (float("-inf"), "Very Poor"),
+        (float("-inf"), "Well Below Average"),
     ],
-
     "towre_pde_standard": [
-        (130, "Very Superior"),
         (121, "Superior"),
         (111, "Above Average"),
         (90, "Average"),
         (80, "Below Average"),
-        (70, "Poor"),
-        (float("-inf"), "Very Poor"),
+        (float("-inf"), "Well Below Average"),
     ],
-
     "ppvt_standard": [
-        (130, "Extremely high score"),
-        (116, "Moderately high score"),
-        (85, "Average score"),
-        (70, "Moderately low score"),
-        (float("-inf"), "Extremely low score"),
+        (131, "Superior"),
+        (116, "Above Average"),
+        (85, "Average"),
+        (70, "Below Average"),
+        (float("-inf"), "Well Below Average"),
     ],
 }
 
@@ -114,6 +98,23 @@ def clean_value(value: Any) -> str:
 
     return str(value).strip()
 
+def classify_score(value: Any, rules: list[tuple[float, str]]) -> str:
+    """
+    Return the interpretation category for a score.
+    """
+    if pd.isna(value) or str(value).strip() == "":
+        return ""
+
+    try:
+        score = float(str(value).strip())
+    except ValueError:
+        return ""
+
+    for cutoff, category in rules:
+        if score >= cutoff:
+            return category
+
+    return ""
 
 def format_date(value: Any) -> str:
     """
@@ -141,6 +142,13 @@ def build_context(row: pd.Series) -> dict:
         context[template_field] = clean_value(row.get(csv_field))
 
     context["visit_date"] = format_date(row.get("visit_date"))
+
+    # Add interpretation categories
+    for score_field, category_field in CATEGORY_FIELDS.items():
+        context[category_field] = classify_score(
+            row.get(score_field),
+            TEST_CLASSIFICATION_RULES[score_field],
+        )
 
     return context
 
