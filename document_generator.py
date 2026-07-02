@@ -81,6 +81,14 @@ TEST_CLASSIFICATION_RULES = {
         (70, "suggests some difficulty understanding receptive vocabulary for their age"),
         (float("-inf"), "suggests significant difficulty understanding receptive vocabulary for their age"),
     ],
+
+    "dibels_orf_words_correct": [
+        (76, "suggests a strong ability to read connected text fluently"),
+        (39, "suggests a typical ability to read connected text fluently"),
+        (26, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    
 }
 
 
@@ -93,7 +101,8 @@ CATEGORY_FIELDS = {
     "wrmt_pc_standard": "wrmt_pc_category",
     "towre_swe_standard": "towre_swe_category",
     "towre_pde_standard": "towre_pde_category",
-    "ppvt_standard" : "ppvt_category"
+    "ppvt_standard" : "ppvt_category",
+    "dibels_orf_words_correct": "dibels_orf_words_correct_category"
 }
 
 def clean_value(value: Any) -> str:
