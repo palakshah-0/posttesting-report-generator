@@ -35,6 +35,24 @@ if uploaded_file is not None:
             uploaded_file,
             dtype=str,
         )
+    
+    # Rename REDCap export columns to the names expected by the app
+    data = data.rename(columns={
+        "Amira_ID": "sub_id_number",
+        "Matrices Standard": "kbit_standard",
+        "Elision Words Standard": "ctopp_elision_standard",
+        "Nonword Repetition Standard": "ctopp_nwr_standard",
+        "Oral Reading Fluency Total Words": "dibels_orf_total_words",
+        "Oral Reading Fluency Total Errors": "dibels_orf_total_errors",
+        "Oral Reading Fluency Total Words Correct": "dibels_orf_words_correct",
+        "Word Identification Standard": "wrmt_word_id_standard",
+        "Word Attack Standard": "wrmt_word_attack_standard",
+        "Passage Comprehension Standard": "wrmt_pc_standard",
+        "Sight word efficiency standard": "towre_swe_standard",
+        "Phonemic decoding efficiency standard": "towre_pde_standard",
+        "PPVT Standard": "ppvt_standard",
+    })
+    
     except Exception as error:
         st.error(f"The CSV could not be read: {error}")
         st.stop()
@@ -60,6 +78,7 @@ if uploaded_file is not None:
         "ppvt_standard"
     }
 
+    
     missing_columns = required_columns - set(data.columns)
 
     if missing_columns:
