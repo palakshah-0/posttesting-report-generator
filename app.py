@@ -35,6 +35,8 @@ if uploaded_file is not None:
             uploaded_file,
             dtype=str,
     )
+        # Remove leading/trailing spaces from column names
+        data.columns = data.columns.str.strip()
 
     # Rename REDCap export columns to the names expected by the app
         data = data.rename(columns={
