@@ -31,11 +31,11 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
     try:
-        data = pd.read_csv(
-            uploaded_file,
-            dtype=str,
-        )
-    
+    data = pd.read_csv(
+        uploaded_file,
+        dtype=str,
+    )
+
     # Rename REDCap export columns to the names expected by the app
     data = data.rename(columns={
         "Amira_ID": "sub_id_number",
@@ -52,10 +52,10 @@ if uploaded_file is not None:
         "Phonemic decoding efficiency standard": "towre_pde_standard",
         "PPVT Standard": "ppvt_standard",
     })
-    
-    except Exception as error:
-        st.error(f"The CSV could not be read: {error}")
-        st.stop()
+
+except Exception as error:
+    st.error(f"The CSV could not be read: {error}")
+    st.stop()
 
     st.success("CSV uploaded successfully.")
 
