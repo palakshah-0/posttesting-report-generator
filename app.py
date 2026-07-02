@@ -53,9 +53,9 @@ if uploaded_file is not None:
         "PPVT Standard": "ppvt_standard",
     })
 
-except Exception as error:
-    st.error(f"The CSV could not be read: {error}")
-    st.stop()
+    except Exception as error:
+        st.error(f"The CSV could not be read: {error}")
+        st.stop()
 
     st.success("CSV uploaded successfully.")
 
