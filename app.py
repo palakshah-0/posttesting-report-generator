@@ -31,9 +31,9 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
     try:
-    data = pd.read_csv(
-        uploaded_file,
-        dtype=str,
+        data = pd.read_csv(
+            uploaded_file,
+            dtype=str,
     )
 
     # Rename REDCap export columns to the names expected by the app
