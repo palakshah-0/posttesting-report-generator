@@ -8,7 +8,7 @@ from docxtpl import DocxTemplate
 from field_mapping import FIELD_MAP
 
 
-# Category fields = sentence fields for paragraph text
+# Paragraph sentence rules
 TEST_CATEGORY_RULES = {
     "kbit_standard": [
         (131, "suggests advanced nonverbal reasoning abilities"),
@@ -73,86 +73,20 @@ TEST_CATEGORY_RULES = {
         (70, "suggests some difficulty understanding receptive vocabulary for their age"),
         (float("-inf"), "suggests significant difficulty understanding receptive vocabulary for their age"),
     ],
-    "dibels_orf_words_correct": [
-        (76, "suggests a strong ability to read connected text fluently"),
-        (39, "suggests a typical ability to read connected text fluently"),
-        (26, "suggests some difficulties with the ability to read connected text fluently"),
-        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
-    ],
 }
 
 
-# Interpretation fields = Average, Below Average, etc. for table column
+# Table interpretation rules
 TEST_INTERPRETATION_RULES = {
-    "kbit_standard": [
-        (131, "Superior"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "ctopp_elision_standard": [
-        (15, "Superior"),
-        (13, "Above Average"),
-        (8, "Average"),
-        (6, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "ctopp_nwr_standard": [
-        (15, "Superior"),
-        (13, "Above Average"),
-        (8, "Average"),
-        (6, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "wrmt_word_id_standard": [
-        (131, "Superior"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "wrmt_word_attack_standard": [
-        (131, "Superior"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "wrmt_pc_standard": [
-        (131, "Superior"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "towre_swe_standard": [
-        (121, "Superior"),
-        (111, "Above Average"),
-        (90, "Average"),
-        (80, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "towre_pde_standard": [
-        (121, "Superior"),
-        (111, "Above Average"),
-        (90, "Average"),
-        (80, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "ppvt_standard": [
-        (131, "Superior"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
-    "dibels_orf_words_correct": [
-        (76, "Above Average"),
-        (39, "Average"),
-        (26, "Below Average"),
-        (float("-inf"), "Well Below Average"),
-    ],
+    "kbit_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
+    "ctopp_elision_standard": [(15, "Superior"), (13, "Above Average"), (8, "Average"), (6, "Below Average"), (float("-inf"), "Well Below Average")],
+    "ctopp_nwr_standard": [(15, "Superior"), (13, "Above Average"), (8, "Average"), (6, "Below Average"), (float("-inf"), "Well Below Average")],
+    "wrmt_word_id_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
+    "wrmt_word_attack_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
+    "wrmt_pc_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
+    "towre_swe_standard": [(121, "Superior"), (111, "Above Average"), (90, "Average"), (80, "Below Average"), (float("-inf"), "Well Below Average")],
+    "towre_pde_standard": [(121, "Superior"), (111, "Above Average"), (90, "Average"), (80, "Below Average"), (float("-inf"), "Well Below Average")],
+    "ppvt_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
 }
 
 
@@ -166,7 +100,60 @@ CATEGORY_FIELDS = {
     "towre_swe_standard": "towre_swe_category",
     "towre_pde_standard": "towre_pde_category",
     "ppvt_standard": "ppvt_category",
-    "dibels_orf_words_correct": "dibels_orf_words_correct_category",
+}
+
+
+DIBELS_WORDS_CORRECT_SENTENCES = {
+    "1": [
+        (76, "suggests a strong ability to read connected text fluently"),
+        (39, "suggests a typical ability to read connected text fluently"),
+        (26, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    "2": [
+        (128, "suggests a strong ability to read connected text fluently"),
+        (94, "suggests a typical ability to read connected text fluently"),
+        (77, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+}
+
+
+DIBELS_WORDS_CORRECT_INTERPRETATIONS = {
+    "1": [(76, "Above Average"), (39, "Average"), (26, "Below Average"), (float("-inf"), "Well Below Average")],
+    "2": [(128, "Above Average"), (94, "Average"), (77, "Below Average"), (float("-inf"), "Well Below Average")],
+}
+
+
+DIBELS_WORDS_CORRECT_TYPICAL_RANGE = {
+    "1": "39–75",
+    "2": "94–127",
+}
+
+
+DIBELS_ACCURACY_SENTENCES = {
+    "1": [
+        (91, "suggests a typical level of accuracy when reading connected text"),
+        (85, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+    "2": [
+        (96, "suggests a typical level of accuracy when reading connected text"),
+        (85, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+}
+
+
+DIBELS_ACCURACY_INTERPRETATIONS = {
+    "1": [(91, "Average"), (85, "Below Average"), (float("-inf"), "Well Below Average")],
+    "2": [(96, "Average"), (85, "Below Average"), (float("-inf"), "Well Below Average")],
+}
+
+
+DIBELS_ACCURACY_TYPICAL_RANGE = {
+    "1": "91–100%",
+    "2": "96–100%",
 }
 
 
@@ -181,13 +168,43 @@ def classify_score(value: Any, rules: list[tuple[float, str]]) -> str:
         return ""
 
     try:
-        score = float(str(value).strip())
+        score = float(str(value).replace("%", "").strip())
     except ValueError:
         return ""
 
     for cutoff, label in rules:
         if score >= cutoff:
             return label
+
+    return ""
+
+
+def calculate_dorf_accuracy(words_correct: Any, total_words: Any) -> str:
+    if pd.isna(words_correct) or pd.isna(total_words):
+        return ""
+
+    try:
+        correct = float(str(words_correct).strip())
+        total = float(str(total_words).strip())
+
+        if total == 0:
+            return ""
+
+        accuracy = (correct / total) * 100
+        return f"{accuracy:.0f}%"
+
+    except ValueError:
+        return ""
+
+
+def get_grade(value: Any) -> str:
+    value = clean_value(value)
+
+    if value in {"1", "1st", "First", "first", "Grade 1", "1st Grade"}:
+        return "1"
+
+    if value in {"2", "2nd", "Second", "second", "Grade 2", "2nd Grade"}:
+        return "2"
 
     return ""
 
@@ -213,18 +230,43 @@ def build_context(row: pd.Series) -> dict:
     context["visit_date"] = format_date(row.get("visit_date"))
 
     for score_field, category_field in CATEGORY_FIELDS.items():
-        # Paragraph sentence placeholders, e.g. {{ kbit_category }}
         context[category_field] = classify_score(
             row.get(score_field),
             TEST_CATEGORY_RULES[score_field],
         )
 
-        # Table interpretation placeholders, e.g. {{ kbit_interpretation }}
         interpretation_field = category_field.replace("_category", "_interpretation")
+
         context[interpretation_field] = classify_score(
             row.get(score_field),
             TEST_INTERPRETATION_RULES[score_field],
         )
+
+    grade = get_grade(row.get("grade"))
+
+    context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
+    context["dibels_orf_words_correct_category"] = classify_score(
+        row.get("dibels_orf_words_correct"),
+        DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
+    )
+    context["dibels_orf_words_correct_interpretation"] = classify_score(
+        row.get("dibels_orf_words_correct"),
+        DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
+    )
+
+    context["dibels_orf_accuracy"] = calculate_dorf_accuracy(
+        row.get("dibels_orf_words_correct"),
+        row.get("dibels_orf_total_words"),
+    )
+    context["dibels_orf_accuracy_typical_range"] = DIBELS_ACCURACY_TYPICAL_RANGE.get(grade, "")
+    context["dibels_orf_accuracy_category"] = classify_score(
+        context.get("dibels_orf_accuracy"),
+        DIBELS_ACCURACY_SENTENCES.get(grade, []),
+    )
+    context["dibels_orf_accuracy_interpretation"] = classify_score(
+        context.get("dibels_orf_accuracy"),
+        DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
+    )
 
     return context
 
