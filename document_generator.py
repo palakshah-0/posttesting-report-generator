@@ -242,7 +242,7 @@ def build_context(row: pd.Series) -> dict:
             TEST_INTERPRETATION_RULES[score_field],
         )
 
-    grade = get_grade(row.get("grade"))
+    grade = get_grade(row.get("Grade in 2025-2026 school year"))
 
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_words_correct_category"] = classify_score(
