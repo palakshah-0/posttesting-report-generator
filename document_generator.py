@@ -8,6 +8,10 @@ from docxtpl import DocxTemplate
 from field_mapping import FIELD_MAP
 
 
+# -------------------------
+# General assessment rules
+# -------------------------
+
 TEST_CATEGORY_RULES = {
     "kbit_standard": [
         (131, "suggests advanced nonverbal reasoning abilities"),
@@ -101,12 +105,41 @@ CATEGORY_FIELDS = {
 }
 
 
+# -------------------------
+# DIBELS grade-based rules
+# -------------------------
+
 DIBELS_WORDS_CORRECT_SENTENCES = {
-    "1": [(76, "suggests a strong ability to read connected text fluently"), (39, "suggests a typical ability to read connected text fluently"), (26, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
-    "2": [(128, "suggests a strong ability to read connected text fluently"), (94, "suggests a typical ability to read connected text fluently"), (77, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
-    "3": [(136, "suggests a strong ability to read connected text fluently"), (114, "suggests a typical ability to read connected text fluently"), (96, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
-    "4": [(159, "suggests a strong ability to read connected text fluently"), (125, "suggests a typical ability to read connected text fluently"), (99, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
-    "5": [(157, "suggests a strong ability to read connected text fluently"), (137, "suggests a typical ability to read connected text fluently"), (124, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
+    "1": [
+        (76, "suggests a strong ability to read connected text fluently"),
+        (39, "suggests a typical ability to read connected text fluently"),
+        (26, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    "2": [
+        (128, "suggests a strong ability to read connected text fluently"),
+        (94, "suggests a typical ability to read connected text fluently"),
+        (77, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    "3": [
+        (136, "suggests a strong ability to read connected text fluently"),
+        (114, "suggests a typical ability to read connected text fluently"),
+        (96, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    "4": [
+        (159, "suggests a strong ability to read connected text fluently"),
+        (125, "suggests a typical ability to read connected text fluently"),
+        (99, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
+    "5": [
+        (157, "suggests a strong ability to read connected text fluently"),
+        (137, "suggests a typical ability to read connected text fluently"),
+        (124, "suggests some difficulties with the ability to read connected text fluently"),
+        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
+    ],
 }
 
 
@@ -129,11 +162,31 @@ DIBELS_WORDS_CORRECT_TYPICAL_RANGE = {
 
 
 DIBELS_ACCURACY_SENTENCES = {
-    "1": [(91, "suggests a typical level of accuracy when reading connected text"), (85, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
-    "2": [(96, "suggests a typical level of accuracy when reading connected text"), (85, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
-    "3": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
-    "4": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
-    "5": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
+    "1": [
+        (91, "suggests a typical level of accuracy when reading connected text"),
+        (85, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+    "2": [
+        (96, "suggests a typical level of accuracy when reading connected text"),
+        (85, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+    "3": [
+        (96, "suggests a typical level of accuracy when reading connected text"),
+        (91, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+    "4": [
+        (96, "suggests a typical level of accuracy when reading connected text"),
+        (91, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
+    "5": [
+        (96, "suggests a typical level of accuracy when reading connected text"),
+        (91, "suggests some difficulties with accuracy when reading connected text"),
+        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
+    ],
 }
 
 
@@ -154,6 +207,10 @@ DIBELS_ACCURACY_TYPICAL_RANGE = {
     "5": "96–100%",
 }
 
+
+# -------------------------
+# Helper functions
+# -------------------------
 
 def clean_value(value: Any) -> str:
     if pd.isna(value):
@@ -198,16 +255,32 @@ def calculate_dorf_accuracy(words_correct: Any, total_words: Any) -> str:
 def get_grade(value: Any) -> str:
     value = clean_value(value).lower()
 
-    if value in {"1", "1st", "first", "grade 1", "1st grade"}:
+    if value in {"1", "1.0", "1st", "first", "grade 1", "1st grade"}:
         return "1"
-    if value in {"2", "2nd", "second", "grade 2", "2nd grade"}:
+    if value in {"2", "2.0", "2nd", "second", "grade 2", "2nd grade"}:
         return "2"
-    if value in {"3", "3rd", "third", "grade 3", "3rd grade"}:
+    if value in {"3", "3.0", "3rd", "third", "grade 3", "3rd grade"}:
         return "3"
-    if value in {"4", "4th", "fourth", "grade 4", "4th grade"}:
+    if value in {"4", "4.0", "4th", "fourth", "grade 4", "4th grade"}:
         return "4"
-    if value in {"5", "5th", "fifth", "grade 5", "5th grade"}:
+    if value in {"5", "5.0", "5th", "fifth", "grade 5", "5th grade"}:
         return "5"
+
+    return ""
+
+
+def get_student_grade(row: pd.Series) -> str:
+    possible_grade_fields = [
+        "grade_2025_2026",
+        "Grade in 2025-2026 school year",
+        "grade",
+        "student_grade",
+    ]
+
+    for field in possible_grade_fields:
+        grade = get_grade(row.get(field))
+        if grade:
+            return grade
 
     return ""
 
@@ -223,6 +296,10 @@ def format_date(value: Any) -> str:
 
     return parsed_date.strftime("%B %d, %Y")
 
+
+# -------------------------
+# Main context builder
+# -------------------------
 
 def build_context(row: pd.Series) -> dict:
     context = {}
@@ -246,7 +323,7 @@ def build_context(row: pd.Series) -> dict:
             TEST_INTERPRETATION_RULES[score_field],
         )
 
-    grade = get_grade(row.get("grade_2025_2026"))
+    grade = get_student_grade(row)
 
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
 
@@ -279,6 +356,10 @@ def build_context(row: pd.Series) -> dict:
 
     return context
 
+
+# -------------------------
+# Document creation
+# -------------------------
 
 def create_document(template_path: str | Path, context: dict) -> BytesIO:
     template = DocxTemplate(template_path)
