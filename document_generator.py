@@ -8,6 +8,49 @@ from docxtpl import DocxTemplate
 from field_mapping import FIELD_MAP
 
 
+from zipfile import ZipFile, ZIP_DEFLATED
+from lxml import etree
+
+def remove_content_controls(docx_bytes: BytesIO) -> BytesIO:
+    docx_bytes.seek(0)
+    cleaned_output = BytesIO()
+
+    with ZipFile(docx_bytes, "r") as zin:
+        with ZipFile(cleaned_output, "w", ZIP_DEFLATED) as zout:
+            for item in zin.infolist():
+                data = zin.read(item.filename)
+
+                if item.filename.startswith("word/") and item.filename.endswith(".xml"):
+                    try:
+                        root = etree.fromstring(data)
+                        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+
+                        for sdt in root.xpath(".//w:sdt", namespaces=ns):
+                            parent = sdt.getparent()
+                            sdt_content = sdt.find("w:sdtContent", namespaces=ns)
+
+                            if parent is not None and sdt_content is not None:
+                                index = parent.index(sdt)
+
+                                for child in list(sdt_content):
+                                    parent.insert(index, child)
+                                    index += 1
+
+                                parent.remove(sdt)
+
+                        data = etree.tostring(
+                            root,
+                            xml_declaration=True,
+                            encoding="UTF-8",
+                            standalone="yes"
+                        )
+                    except Exception:
+                        pass
+
+                zout.writestr(item, data)
+
+    cleaned_output.seek(0)
+    return cleaned_output
 # -------------------------
 # General assessment rules
 # -------------------------
@@ -368,5 +411,7 @@ def create_document(template_path: str | Path, context: dict) -> BytesIO:
     output = BytesIO()
     template.save(output)
     output.seek(0)
+
+    output = remove_content_controls(output)
 
     return output
