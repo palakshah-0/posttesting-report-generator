@@ -230,7 +230,8 @@ def build_context(row: pd.Series) -> dict:
     for csv_field, template_field in FIELD_MAP.items():
         context[template_field] = clean_value(row.get(csv_field))
 
-    context["visit_date"] = format_date(row.get("visit_date"))
+    context["visit_date"] = format_date(row.get("doe1"))
+    context["age"] = clean_value(row.get("calc_age1"))
 
     for score_field, category_field in CATEGORY_FIELDS.items():
         context[category_field] = classify_score(
@@ -245,7 +246,7 @@ def build_context(row: pd.Series) -> dict:
             TEST_INTERPRETATION_RULES[score_field],
         )
 
-    grade = get_grade(row.get("Grade in 2025-2026 school year"))
+    grade = get_grade(row.get("grade_2025_2026"))
 
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
 
