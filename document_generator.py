@@ -8,7 +8,6 @@ from docxtpl import DocxTemplate
 from field_mapping import FIELD_MAP
 
 
-# Paragraph sentence rules
 TEST_CATEGORY_RULES = {
     "kbit_standard": [
         (131, "suggests advanced nonverbal reasoning abilities"),
@@ -76,7 +75,6 @@ TEST_CATEGORY_RULES = {
 }
 
 
-# Table interpretation rules
 TEST_INTERPRETATION_RULES = {
     "kbit_standard": [(131, "Superior"), (116, "Above Average"), (85, "Average"), (70, "Below Average"), (float("-inf"), "Well Below Average")],
     "ctopp_elision_standard": [(15, "Superior"), (13, "Above Average"), (8, "Average"), (6, "Below Average"), (float("-inf"), "Well Below Average")],
@@ -104,56 +102,56 @@ CATEGORY_FIELDS = {
 
 
 DIBELS_WORDS_CORRECT_SENTENCES = {
-    "1": [
-        (76, "suggests a strong ability to read connected text fluently"),
-        (39, "suggests a typical ability to read connected text fluently"),
-        (26, "suggests some difficulties with the ability to read connected text fluently"),
-        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
-    ],
-    "2": [
-        (128, "suggests a strong ability to read connected text fluently"),
-        (94, "suggests a typical ability to read connected text fluently"),
-        (77, "suggests some difficulties with the ability to read connected text fluently"),
-        (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently"),
-    ],
+    "1": [(76, "suggests a strong ability to read connected text fluently"), (39, "suggests a typical ability to read connected text fluently"), (26, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
+    "2": [(128, "suggests a strong ability to read connected text fluently"), (94, "suggests a typical ability to read connected text fluently"), (77, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
+    "3": [(136, "suggests a strong ability to read connected text fluently"), (114, "suggests a typical ability to read connected text fluently"), (96, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
+    "4": [(159, "suggests a strong ability to read connected text fluently"), (125, "suggests a typical ability to read connected text fluently"), (99, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
+    "5": [(157, "suggests a strong ability to read connected text fluently"), (137, "suggests a typical ability to read connected text fluently"), (124, "suggests some difficulties with the ability to read connected text fluently"), (float("-inf"), "suggests significant difficulties with the ability to read connected text fluently")],
 }
 
 
 DIBELS_WORDS_CORRECT_INTERPRETATIONS = {
     "1": [(76, "Above Average"), (39, "Average"), (26, "Below Average"), (float("-inf"), "Well Below Average")],
     "2": [(128, "Above Average"), (94, "Average"), (77, "Below Average"), (float("-inf"), "Well Below Average")],
+    "3": [(136, "Above Average"), (114, "Average"), (96, "Below Average"), (float("-inf"), "Well Below Average")],
+    "4": [(159, "Above Average"), (125, "Average"), (99, "Below Average"), (float("-inf"), "Well Below Average")],
+    "5": [(157, "Above Average"), (137, "Average"), (124, "Below Average"), (float("-inf"), "Well Below Average")],
 }
 
 
 DIBELS_WORDS_CORRECT_TYPICAL_RANGE = {
     "1": "39–75",
     "2": "94–127",
+    "3": "114–135",
+    "4": "125–158",
+    "5": "137–156",
 }
 
 
 DIBELS_ACCURACY_SENTENCES = {
-    "1": [
-        (91, "suggests a typical level of accuracy when reading connected text"),
-        (85, "suggests some difficulties with accuracy when reading connected text"),
-        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
-    ],
-    "2": [
-        (96, "suggests a typical level of accuracy when reading connected text"),
-        (85, "suggests some difficulties with accuracy when reading connected text"),
-        (float("-inf"), "suggests significant difficulties with accuracy when reading connected text"),
-    ],
+    "1": [(91, "suggests a typical level of accuracy when reading connected text"), (85, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
+    "2": [(96, "suggests a typical level of accuracy when reading connected text"), (85, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
+    "3": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
+    "4": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
+    "5": [(96, "suggests a typical level of accuracy when reading connected text"), (91, "suggests some difficulties with accuracy when reading connected text"), (float("-inf"), "suggests significant difficulties with accuracy when reading connected text")],
 }
 
 
 DIBELS_ACCURACY_INTERPRETATIONS = {
     "1": [(91, "Average"), (85, "Below Average"), (float("-inf"), "Well Below Average")],
     "2": [(96, "Average"), (85, "Below Average"), (float("-inf"), "Well Below Average")],
+    "3": [(96, "Average"), (91, "Below Average"), (float("-inf"), "Well Below Average")],
+    "4": [(96, "Average"), (91, "Below Average"), (float("-inf"), "Well Below Average")],
+    "5": [(96, "Average"), (91, "Below Average"), (float("-inf"), "Well Below Average")],
 }
 
 
 DIBELS_ACCURACY_TYPICAL_RANGE = {
     "1": "91–100%",
     "2": "96–100%",
+    "3": "96–100%",
+    "4": "96–100%",
+    "5": "96–100%",
 }
 
 
@@ -198,13 +196,18 @@ def calculate_dorf_accuracy(words_correct: Any, total_words: Any) -> str:
 
 
 def get_grade(value: Any) -> str:
-    value = clean_value(value)
+    value = clean_value(value).lower()
 
-    if value in {"1", "1st", "First", "first", "Grade 1", "1st Grade"}:
+    if value in {"1", "1st", "first", "grade 1", "1st grade"}:
         return "1"
-
-    if value in {"2", "2nd", "Second", "second", "Grade 2", "2nd Grade"}:
+    if value in {"2", "2nd", "second", "grade 2", "2nd grade"}:
         return "2"
+    if value in {"3", "3rd", "third", "grade 3", "3rd grade"}:
+        return "3"
+    if value in {"4", "4th", "fourth", "grade 4", "4th grade"}:
+        return "4"
+    if value in {"5", "5th", "fifth", "grade 5", "5th grade"}:
+        return "5"
 
     return ""
 
@@ -245,10 +248,12 @@ def build_context(row: pd.Series) -> dict:
     grade = get_grade(row.get("Grade in 2025-2026 school year"))
 
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
+
     context["dibels_orf_words_correct_category"] = classify_score(
         row.get("dibels_orf_words_correct"),
         DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
     )
+
     context["dibels_orf_words_correct_interpretation"] = classify_score(
         row.get("dibels_orf_words_correct"),
         DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
@@ -258,11 +263,14 @@ def build_context(row: pd.Series) -> dict:
         row.get("dibels_orf_words_correct"),
         row.get("dibels_orf_total_words"),
     )
+
     context["dibels_orf_accuracy_typical_range"] = DIBELS_ACCURACY_TYPICAL_RANGE.get(grade, "")
+
     context["dibels_orf_accuracy_category"] = classify_score(
         context.get("dibels_orf_accuracy"),
         DIBELS_ACCURACY_SENTENCES.get(grade, []),
     )
+
     context["dibels_orf_accuracy_interpretation"] = classify_score(
         context.get("dibels_orf_accuracy"),
         DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
