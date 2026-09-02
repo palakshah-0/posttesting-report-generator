@@ -1,11 +1,16 @@
-FIELD_MAP = { 
-    "sub_id_number" : "sub_id_number", "kbit_standard" : "kbit_standard",
-    "ctopp_elision_standard" : "ctopp_elision_standard", "ctopp_nwr_standard":"ctopp_nwr_standard",
-    "dibels_orf_total_words" : "dibels_orf_total_words", "dibels_orf_total_errors" : "dibels_orf_total_errors",
-    "dibels_orf_words_correct" : "dibels_orf_words_correct", "wrmt_word_id_standard" : "wrmt_word_id_standard",
-    "wrmt_word_attack_standard" : "wrmt_word_attack_standard", "wrmt_pc_standard" : "wrmt_pc_standard",
-    "towre_swe_standard" : "towre_swe_standard", "towre_pde_standard" : "towre_pde_standard",
-    "ppvt_standard" : "ppvt_standard"
-}
+POST_TEST_FIELD_MAP = {
+    "sub_id_number": "sub_id_number",
 
-#The field map maps the column headers of the RedCap CSV file to the place holder variables in the word document.
+    "ctopp_elision_std_post": "ctopp_elision_std_post",
+    "ctopp_nwr_std_post": "ctopp_nwr_std_post",
+    "dibels_words_correct_post": "dibels_words_correct_post",
+
+    "wrmt_wid_std_post": "wrmt_wid_std_post",
+    "wrmt_wa_std_post": "wrmt_wa_std_post",
+    "wrmt_pc_std_post": "wrmt_pc_std_post",
+
+    "towre_swe_std_post": "towre_swe_std_post",
+    "towre_pde_std_post": "towre_pde_std_post",
+
+    "ppvt_std_post": "ppvt_std_post",
+}
