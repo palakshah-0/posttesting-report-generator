@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 from docxtpl import DocxTemplate
 
-from post_test_field_mapping import POST_TEST_FIELD_MAP
+from field_mapping import POST_TEST_FIELD_MAP
 
 
 # ---------------------------------------------------------
