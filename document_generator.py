@@ -5,7 +5,6 @@ from typing import Any
 import pandas as pd
 from docxtpl import DocxTemplate
 
-from field_mapping import FIELD_MAP
 from post_test_field_mapping import POST_TEST_FIELD_MAP
 
 
@@ -15,15 +14,8 @@ from post_test_field_mapping import POST_TEST_FIELD_MAP
 
 TEST_CLASSIFICATION_RULES = {
 
-    "kbit_standard": [
-        (131, "Upper Extreme"),
-        (116, "Above Average"),
-        (85, "Average"),
-        (70, "Below Average"),
-        (float("-inf"), "Lower Extreme"),
-    ],
-
-    "ctopp_elision_standard": [
+    # CTOPP-2 scaled scores
+    "ctopp_elision": [
         (17, "Very Superior"),
         (15, "Superior"),
         (13, "Above Average"),
@@ -33,7 +25,7 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Very Poor"),
     ],
 
-    "ctopp_nwr_standard": [
+    "ctopp_nwr": [
         (17, "Very Superior"),
         (15, "Superior"),
         (13, "Above Average"),
@@ -43,7 +35,8 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Very Poor"),
     ],
 
-    "wrmt_word_id_standard": [
+    # WRMT-III standard scores
+    "wrmt_word_id": [
         (131, "Well Above Average"),
         (116, "Above Average"),
         (85, "Average"),
@@ -51,7 +44,7 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Well Below Average"),
     ],
 
-    "wrmt_word_attack_standard": [
+    "wrmt_word_attack": [
         (131, "Well Above Average"),
         (116, "Above Average"),
         (85, "Average"),
@@ -59,7 +52,7 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Well Below Average"),
     ],
 
-    "wrmt_pc_standard": [
+    "wrmt_pc": [
         (131, "Well Above Average"),
         (116, "Above Average"),
         (85, "Average"),
@@ -67,7 +60,8 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Well Below Average"),
     ],
 
-    "towre_swe_standard": [
+    # TOWRE-2 standard scores
+    "towre_swe": [
         (130, "Very Superior"),
         (121, "Superior"),
         (111, "Above Average"),
@@ -77,7 +71,7 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Very Poor"),
     ],
 
-    "towre_pde_standard": [
+    "towre_pde": [
         (130, "Very Superior"),
         (121, "Superior"),
         (111, "Above Average"),
@@ -87,7 +81,8 @@ TEST_CLASSIFICATION_RULES = {
         (float("-inf"), "Very Poor"),
     ],
 
-    "ppvt_standard": [
+    # PPVT-5 standard scores
+    "ppvt": [
         (130, "Extremely high score"),
         (116, "Moderately high score"),
         (85, "Average score"),
@@ -98,59 +93,48 @@ TEST_CLASSIFICATION_RULES = {
 
 
 # ---------------------------------------------------------
-# CATEGORY FIELD NAMES
+# POST-TEST SCORE -> CATEGORY MAPPING
 # ---------------------------------------------------------
 
-CATEGORY_FIELDS = {
-    "kbit_standard": "kbit_category",
-    "ctopp_elision_standard": "ctopp_elision_category",
-    "ctopp_nwr_standard": "ctopp_nwr_category",
-    "wrmt_word_id_standard": "wrmt_word_id_category",
-    "wrmt_word_attack_standard": "wrmt_word_attack_category",
-    "wrmt_pc_standard": "wrmt_pc_category",
-    "towre_swe_standard": "towre_swe_category",
-    "towre_pde_standard": "towre_pde_category",
-    "ppvt_standard": "ppvt_category",
-}
-
 POST_TEST_CLASSIFICATION_FIELDS = {
+
     "ctopp_elision_std_post": (
-        "ctopp_elision_standard",
+        "ctopp_elision",
         "ctopp_elision_category",
     ),
 
     "ctopp_nwr_std_post": (
-        "ctopp_nwr_standard",
+        "ctopp_nwr",
         "ctopp_nwr_category",
     ),
 
     "wrmt_wid_std_post": (
-        "wrmt_word_id_standard",
+        "wrmt_word_id",
         "wrmt_word_id_category",
     ),
 
     "wrmt_wa_std_post": (
-        "wrmt_word_attack_standard",
+        "wrmt_word_attack",
         "wrmt_word_attack_category",
     ),
 
     "wrmt_pc_std_post": (
-        "wrmt_pc_standard",
+        "wrmt_pc",
         "wrmt_pc_category",
     ),
 
     "towre_swe_std_post": (
-        "towre_swe_standard",
+        "towre_swe",
         "towre_swe_category",
     ),
 
     "towre_pde_std_post": (
-        "towre_pde_standard",
+        "towre_pde",
         "towre_pde_category",
     ),
 
     "ppvt_std_post": (
-        "ppvt_standard",
+        "ppvt",
         "ppvt_category",
     ),
 }
@@ -180,16 +164,21 @@ def format_date(value: Any) -> str:
     2026-06-23 -> June 23, 2026
     """
 
-    if pd.isna(value) or str(value).strip() == "":
+    if pd.isna(value):
+        return ""
+
+    cleaned_value = str(value).strip()
+
+    if cleaned_value == "":
         return ""
 
     parsed_date = pd.to_datetime(
-        value,
+        cleaned_value,
         errors="coerce",
     )
 
     if pd.isna(parsed_date):
-        return clean_value(value)
+        return cleaned_value
 
     return parsed_date.strftime("%B %d, %Y")
 
@@ -214,7 +203,7 @@ def classify_score(
     try:
         numeric_score = float(cleaned_score)
 
-    except ValueError:
+    except (ValueError, TypeError):
         return ""
 
     for minimum_score, category in rules:
@@ -225,45 +214,19 @@ def classify_score(
     return ""
 
 
-def add_classification_categories(
-    context: dict,
-) -> dict:
-    """
-    Add classification labels to the template context.
-    """
-
-    for score_field, category_field in CATEGORY_FIELDS.items():
-
-        rules = TEST_CLASSIFICATION_RULES.get(
-            score_field
-        )
-
-        if rules is None:
-            continue
-
-        score_value = context.get(
-            score_field,
-            "",
-        )
-
-        context[category_field] = classify_score(
-            score_value,
-            rules,
-        )
-
-    return context
-
 def add_post_test_classification_categories(
     context: dict,
 ) -> dict:
     """
-    Add category labels for post-test score fields.
+    Add classification/category labels for all post-test scores.
     """
 
-    for post_score_field, (
-        classification_rule_name,
-        category_field,
+    for (
+        post_score_field,
+        classification_info,
     ) in POST_TEST_CLASSIFICATION_FIELDS.items():
+
+        rule_name, category_field = classification_info
 
         score_value = context.get(
             post_score_field,
@@ -271,10 +234,11 @@ def add_post_test_classification_categories(
         )
 
         rules = TEST_CLASSIFICATION_RULES.get(
-            classification_rule_name
+            rule_name
         )
 
         if rules is None:
+            context[category_field] = ""
             continue
 
         context[category_field] = classify_score(
@@ -283,87 +247,95 @@ def add_post_test_classification_categories(
         )
 
     return context
+
+
 # ---------------------------------------------------------
-# PRE-TEST CONTEXT
+# DIBELS ACCURACY
 # ---------------------------------------------------------
 
 def calculate_dorf_accuracy(
-    words_correct,
-    total_words,
+    words_correct: Any,
+    total_words: Any,
 ) -> str:
     """
-    Calculate DORF accuracy as a whole-number percentage.
-    Example: 95 correct out of 100 returns '95%'.
+    Calculate DIBELS Oral Reading Fluency accuracy.
+
+    Example:
+    95 correct / 100 total words -> 95%
     """
 
-    try:
-        correct = float(clean_value(words_correct))
-        total = float(clean_value(total_words))
-    except ValueError:
+    cleaned_correct = clean_value(
+        words_correct
+    )
+
+    cleaned_total = clean_value(
+        total_words
+    )
+
+    if cleaned_correct == "" or cleaned_total == "":
         return ""
 
-    if total == 0:
+    try:
+        correct = float(cleaned_correct)
+        total = float(cleaned_total)
+
+    except (ValueError, TypeError):
+        return ""
+
+    if total <= 0:
         return ""
 
     accuracy = (correct / total) * 100
 
     return f"{accuracy:.0f}%"
 
-def build_context(
-    row: pd.Series,
-) -> dict:
-    """
-    Build the data used by the pre-test Word template.
-    """
-
-    context = {}
-
-    for csv_field, template_field in FIELD_MAP.items():
-
-        context[template_field] = clean_value(
-            row.get(csv_field)
-        )
-
-    context["visit_date"] = format_date(
-        row.get("visit_date")
-    )
-
-    context = add_classification_categories(
-        context
-    )
-
-    return context
-
 
 # ---------------------------------------------------------
 # POST-TEST CONTEXT
 # ---------------------------------------------------------
 
-def build_post_test_context(
+def build_context(
     row: pd.Series,
 ) -> dict:
     """
-    Build the data used by the post-test Word template.
+    Build the context dictionary used by the post-test
+    Word document template.
     """
 
     context = {}
 
+    # Copy post-test scores from the CSV into the template context
     for csv_field, template_field in POST_TEST_FIELD_MAP.items():
 
         context[template_field] = clean_value(
             row.get(csv_field)
         )
 
+    # Add classification categories
     context = add_post_test_classification_categories(
         context
     )
 
+    # Calculate DIBELS Oral Reading Fluency accuracy
     context["dorf_accuracy"] = calculate_dorf_accuracy(
-    row.get("dibels_words_correct_post"),
-    row.get("dibels_total_words_post"),
-)
+        row.get("dibels_words_correct_post"),
+        row.get("dibels_total_words_post"),
+    )
 
     return context
+
+
+# Optional alias so either function name works
+def build_post_test_context(
+    row: pd.Series,
+) -> dict:
+    """
+    Alias for build_context().
+    """
+
+    return build_context(row)
+
+
 # ---------------------------------------------------------
 # WORD DOCUMENT GENERATION
 # ---------------------------------------------------------
@@ -373,8 +345,18 @@ def create_document(
     context: dict,
 ) -> BytesIO:
     """
-    Fill a Word template and return the completed document.
+    Fill the post-test Word template and return
+    the completed document as an in-memory file.
     """
+
+    template_path = Path(
+        template_path
+    )
+
+    if not template_path.exists():
+        raise FileNotFoundError(
+            f"Word template not found: {template_path}"
+        )
 
     template = DocxTemplate(
         template_path
