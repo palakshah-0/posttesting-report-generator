@@ -1,4 +1,4 @@
-POST_TEST_FIELD_MAP = {
+FIELD_MAP = {
     "sub_id_number": "sub_id_number",
 
     "ctopp_elision_std_post": "ctopp_elision_std_post",
