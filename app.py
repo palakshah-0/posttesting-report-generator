@@ -7,17 +7,17 @@ from document_generator import build_context, create_document
 
 
 TEMPLATE_PATH = Path(
-    "templates/TEST_of_EVAL_Pre_Testing_Template_2.docx"
+    "templates/EVAL Post-Testing Template.docx"
 )
 
 
 st.set_page_config(
-    page_title="REDCap Document Generator",
+    page_title="EVAL Post-Testing Generator",
     page_icon="📄",
 )
 
 
-st.title("REDCap Word Document Generator")
+st.title("EVAL Post-Testing Generator")
 
 st.write(
     "Upload a CSV export from REDCap, select a record, "
