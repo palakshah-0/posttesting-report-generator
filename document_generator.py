@@ -344,12 +344,12 @@ def build_context(row: pd.Series) -> dict:
     for score_field, category_field in CATEGORY_FIELDS.items():
         context[category_field] = classify_score(
             row.get(score_field),
-            TEST_INTERPRETATION_RULES[score_field],
+            TEST_CATEGORY_RULES[score_field],
         )
         interpretation_field = category_field.replace("_category", "_interpretation")
         context[interpretation_field] = classify_score(
             row.get(score_field),
-            TEST_CATEGORY_RULES[score_field],
+            TEST_INTERPRETATION_RULES[score_field],
         )
 
     grade = get_student_grade(row)
@@ -361,11 +361,11 @@ def build_context(row: pd.Series) -> dict:
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_words_correct_category"] = classify_score(
         words_correct,
-        DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
+        DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
     )
     context["dibels_orf_words_correct_interpretation"] = classify_score(
         words_correct,
-        DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
+        DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
     )
 
     context["dorf_accuracy"] = calculate_dorf_accuracy(words_correct, total_words)
@@ -375,11 +375,11 @@ def build_context(row: pd.Series) -> dict:
     context["dibels_orf_accuracy_typical_range"] = DIBELS_ACCURACY_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_accuracy_category"] = classify_score(
         context["dorf_accuracy"],
-        DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
+        DIBELS_ACCURACY_SENTENCES.get(grade, []),
     )
     context["dibels_orf_accuracy_interpretation"] = classify_score(
         context["dorf_accuracy"],
-        DIBELS_ACCURACY_SENTENCES.get(grade, []),
+        DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
     )
 
     return context
