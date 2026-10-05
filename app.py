@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from document_generator import build_context, create_document
+from document_generator import build_context, create_document, get_student_grade
 
 
 # ---------------------------------------------------------
@@ -253,6 +253,21 @@ if uploaded_file is not None:
         selected_rows.iloc[0]
     )
 
+
+    # ---------------------------------------------------------
+    # DORF GRADE
+    # ---------------------------------------------------------
+    # DORF typical ranges and interpretations are grade-specific.
+    # Use the REDCap grade field when present; otherwise ask for grade.
+    detected_grade = get_student_grade(selected_row)
+
+    if not detected_grade:
+        selected_grade = st.selectbox(
+            "Select the student's grade for DORF scoring",
+            ["1", "2", "3", "4", "5"],
+        )
+        selected_row = selected_row.copy()
+        selected_row["student_grade"] = selected_grade
 
     # ---------------------------------------------------------
     # BUILD REPORT DATA
