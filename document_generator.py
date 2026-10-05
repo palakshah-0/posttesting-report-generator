@@ -344,12 +344,12 @@ def build_context(row: pd.Series) -> dict:
     for score_field, category_field in CATEGORY_FIELDS.items():
         context[category_field] = classify_score(
             row.get(score_field),
-            TEST_CATEGORY_RULES[score_field],
+            TEST_INTERPRETATION_RULES[score_field],
         )
         interpretation_field = category_field.replace("_category", "_interpretation")
         context[interpretation_field] = classify_score(
             row.get(score_field),
-            TEST_INTERPRETATION_RULES[score_field],
+            TEST_CATEGORY_RULES[score_field],
         )
 
     grade = get_student_grade(row)
@@ -361,23 +361,25 @@ def build_context(row: pd.Series) -> dict:
     context["dibels_orf_words_correct_typical_range"] = DIBELS_WORDS_CORRECT_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_words_correct_category"] = classify_score(
         words_correct,
-        DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
+        DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
     )
     context["dibels_orf_words_correct_interpretation"] = classify_score(
         words_correct,
-        DIBELS_WORDS_CORRECT_INTERPRETATIONS.get(grade, []),
+        DIBELS_WORDS_CORRECT_SENTENCES.get(grade, []),
     )
 
     context["dorf_accuracy"] = calculate_dorf_accuracy(words_correct, total_words)
     context["dibels_orf_accuracy"] = context["dorf_accuracy"]
+    context["dorf_orf_accuracy"] = context["dorf_accuracy"]
+    context["ctopp_elision_std_post_interpretation"] = context.get("ctopp_elision_category", "")
     context["dibels_orf_accuracy_typical_range"] = DIBELS_ACCURACY_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_accuracy_category"] = classify_score(
         context["dorf_accuracy"],
-        DIBELS_ACCURACY_SENTENCES.get(grade, []),
+        DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
     )
     context["dibels_orf_accuracy_interpretation"] = classify_score(
         context["dorf_accuracy"],
-        DIBELS_ACCURACY_INTERPRETATIONS.get(grade, []),
+        DIBELS_ACCURACY_SENTENCES.get(grade, []),
     )
 
     return context
@@ -386,77 +388,6 @@ def build_context(row: pd.Series) -> dict:
 def build_post_test_context(row: pd.Series) -> dict:
     return build_context(row)
 
-
-
-def fix_rendered_report(docx_bytes: BytesIO, context: dict) -> BytesIO:
-    """Apply final report wording/table fixes after the Jinja template is rendered."""
-    from docx import Document
-
-    docx_bytes.seek(0)
-    doc = Document(docx_bytes)
-
-    # The template's Interpretation column should contain the categorical
-    # interpretation (Average, Below Average, etc.), not the longer sentence.
-    table_interpretations = {
-        "CTOPP-2 Elision": context.get("ctopp_elision_interpretation", ""),
-        "CTOPP-2 Nonword Repetition": context.get("ctopp_nwr_interpretation", ""),
-        "DORF Total Words Correct": context.get("dibels_orf_words_correct_interpretation", ""),
-        "DORF Accuracy": context.get("dibels_orf_accuracy_interpretation", ""),
-        "WRMT-III Word Identification": context.get("wrmt_word_id_interpretation", ""),
-        "TOWRE-2 Sight Word Efficiency": context.get("towre_swe_interpretation", ""),
-        "WRMT-III Passage": context.get("wrmt_pc_interpretation", ""),
-        "WRMT-III Word Attack": context.get("wrmt_word_attack_interpretation", ""),
-        "TOWRE-2 Phonemic Decoding": context.get("towre_pde_interpretation", ""),
-        "PPVT-5": context.get("ppvt_interpretation", ""),
-    }
-
-    for table in doc.tables:
-        for row in table.rows:
-            row_text = " ".join(cell.text for cell in row.cells)
-            for label, interpretation in table_interpretations.items():
-                if label in row_text and interpretation and len(row.cells) >= 2:
-                    row.cells[-1].text = interpretation
-                    break
-
-    # Fix paragraph grammar and fill the DORF interpretations that were left
-    # as placeholders in the post-test template.
-    for paragraph in doc.paragraphs:
-        text = paragraph.text
-
-        if "which is suggests" in text:
-            text = text.replace("which is suggests", "which suggests")
-
-        if "Total Words Correct score reflects all words read correctly" in text:
-            score = context.get("dibels_orf_words_correct_post", "")
-            category = context.get("dibels_orf_words_correct_category", "")
-            if score and category:
-                import re
-                text = re.sub(
-                    r"Your child received a score of\s*[^,\.]*,\s*which(?: is)?\s*[^\.]*\.",
-                    f"Your child received a score of {score}, which {category}.",
-                    text,
-                    count=1,
-                )
-
-        if "Accuracy score represents the percentage" in text:
-            accuracy = context.get("dibels_orf_accuracy", "")
-            category = context.get("dibels_orf_accuracy_category", "")
-            if accuracy and category:
-                import re
-                text = re.sub(
-                    r"Your child received a score of\s*[^,\.]*,\s*which\s*[^\.]*\.",
-                    f"Your child received a score of {accuracy}, which {category}.",
-                    text,
-                    count=1,
-                )
-
-        if text != paragraph.text:
-            paragraph.text = text
-
-    output = BytesIO()
-    doc.save(output)
-    output.seek(0)
-    return output
 
 
 def create_document(template_path: str | Path, context: dict) -> BytesIO:
@@ -471,7 +402,6 @@ def create_document(template_path: str | Path, context: dict) -> BytesIO:
     template.save(output)
     output.seek(0)
 
-    output = fix_rendered_report(output, context)
     output = remove_content_controls(output)
     output = remove_comments(output)
     return output
