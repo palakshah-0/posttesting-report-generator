@@ -371,7 +371,7 @@ def build_context(row: pd.Series) -> dict:
     context["dorf_accuracy"] = calculate_dorf_accuracy(words_correct, total_words)
     context["dibels_orf_accuracy"] = context["dorf_accuracy"]
     context["dorf_orf_accuracy"] = context["dorf_accuracy"]
-    context["ctopp_elision_std_post_interpretation"] = context.get("ctopp_elision_category", "")
+    context["ctopp_elision_std_post_interpretation"] = context.get("ctopp_elision_interpretation", "")
     context["dibels_orf_accuracy_typical_range"] = DIBELS_ACCURACY_TYPICAL_RANGE.get(grade, "")
     context["dibels_orf_accuracy_category"] = classify_score(
         context["dorf_accuracy"],
